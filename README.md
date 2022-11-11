@@ -15,6 +15,15 @@ The bit counting mode can be "msb" or "lsb" that indicates:
  
     **bit string**: &emsp;     0 0 0 1 0 0 1 1
 
+An example: 
+``` bash
+echo 4 > file # 4 == 00000100
+echo 0 1 2 3 4 6 5 7 > order_table
+
+./main ./file 8 ./order_table "msb"
+ source: 4 -> result: 2 # the order swap 6th bit and 5th bit, so result == 00000010 
+```
+
 Here you can find the standard bit order table: 
 MSB:   
 ``` c
