@@ -7,13 +7,13 @@
 
 static const uint64_t m[] = {
     0xffffffffffffffff, 
-    0xffffffff, 
-    0xffff, 
-    0xff
+    0x00000000ffffffff, 
+    0x000000000000ffff, 
+    0x00000000000000ff
 };
 
 static void Usage(){
-    fputs("usage: ./permutation \"file to convert\" \"bit of mask\" \"mask filename\" \"bit numbering mode\".\nexit.\n", stderr);    
+    fputs("usage: ./permutation \"file to convert\" \"bit of mask\" \"mask filename\" \"bit numbering mode\"\nexit.\n", stderr);    
 }
 
 int main(int argc, char **argv){
@@ -28,10 +28,27 @@ int main(int argc, char **argv){
     }
 
     f = fopen(argv[1], "rb");
+
+    if(!f){
+        fputs("fopen() error.\nexit.\n", stderr);
+        return -1;
+    }
+
     tf = fopen(argv[3], "r");
+
+    if(!tf){
+        fputs("fopen() error.\nexit.\n", stderr);
+        return -1;
+    }
+
     table = (int *) malloc(sizeof(int) * atoi(argv[2]));
 
-    fread(&b, sizeof(uint64_t), 1, f);
+    if(!table){
+        fputs("malloc() error.\nexit.\n", stderr);
+        return -1;
+    }
+
+    fscanf(f, "%lu", &b);
     fclose(f);
 
     switch(atoi(argv[2])){
@@ -39,9 +56,8 @@ int main(int argc, char **argv){
         case 32: b &= m[1]; break;
         case 16: b &= m[2]; break;
         case 8:  b &= m[3]; break;
+        default: fputs("argv[2] not allowed.\eexit\n", stderr); break;
     }
-
-    printf("%c\n", (char) b);
 
     for(i = 0; i < atoi(argv[2]); i++){
         fscanf(tf, "%d", &table[i]);
