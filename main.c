@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "read_file.h"
 #include "bit_permutation.h"
 
 static const uint64_t m[] = {
@@ -48,20 +49,21 @@ int main(int argc, char **argv){
         return -1;
     }
 
-    fscanf(f, "%lu", &b);
-    fclose(f);
-
     switch(atoi(argv[2])){
-        case 64: b &= m[0]; break;
-        case 32: b &= m[1]; break;
-        case 16: b &= m[2]; break;
-        case 8:  b &= m[3]; break;
+        case 64: b = read64bit(f); b &= m[0]; break;
+        case 32: b = read32bit(f); b &= m[1]; break;
+        case 16: b = read16bit(f); b &= m[2]; break;
+        case 8:  b = read8bit(f); b &= m[3]; break;
         default: fputs("argv[2] not allowed.\eexit\n", stderr); break;
     }
+
+    fclose(f);
 
     for(i = 0; i < atoi(argv[2]); i++){
         fscanf(tf, "%d", &table[i]);
     }
+
+    fclose(tf);
 
     printf("source: %lu -> result: %lu\n", b, permutation(b, table, atoi(argv[2]), argv[4]));
     
