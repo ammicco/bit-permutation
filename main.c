@@ -20,8 +20,8 @@ static void Usage(){
 int main(int argc, char **argv){
     FILE *f, *tf; 
     int *table;
-    int i;
-    uint64_t *b = 0;
+    int i, bit_num = atoi(argv[2]);
+    uint64_t *b;
 
     if(argc < 4){
         Usage();
@@ -42,21 +42,21 @@ int main(int argc, char **argv){
         return -1;
     }
 
-    table = (int *) malloc(sizeof(int) * atoi(argv[2]));
+    table = (int *) malloc(sizeof(int) * bit_num);
 
     if(!table){
         fputs("malloc() error.\nexit.\n", stderr);
         return -1;
     }
 
-    if(atoi(argv[2]) != 64 && atoi(argv[2]) != 32 && atoi(argv[2]) != 16 && atoi(argv[2]) != 8){
+    if(bit_num != 64 && bit_num != 32 && bit_num != 16 && bit_num != 8){
         fputs("argv[2] not allowed.\eexit\n", stderr);
         return -1;
     }
 
-    b = (uint64_t *) readbit(f, atoi(argv[2]));
+    b = (uint64_t *) readbit(f, bit_num);
 
-    switch(atoi(argv[2])){
+    switch(bit_num){
         case 64: *(b) &= m[0]; break;
         case 32: *(b) &= m[1]; break;
         case 16: *(b) &= m[2]; break;
@@ -66,13 +66,13 @@ int main(int argc, char **argv){
 
     fclose(f);
 
-    for(i = 0; i < atoi(argv[2]); i++){
+    for(i = 0; i < bit_num; i++){
         fscanf(tf, "%d", &table[i]);
     }
 
     fclose(tf);
 
-    printf("source: %lu -> result: %lu\n", *(b), permutation(*(b), table, atoi(argv[2]), argv[4]));
+    printf("source: %lu -> result: %lu\n", *(b), permutation(*(b), table, bit_num, argv[4]));
     
     return 0;
 }
